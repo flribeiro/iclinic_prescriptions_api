@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import environ
+
+env = environ.Env()
+environ.Env.read_env('.env')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '!z#%i0+6x1w-h-k6r!l83rgjg8-72$v7j@)^=gxi*+_dj8qh^9'
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -37,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'prescriptions',
 ]
 
 MIDDLEWARE = [
@@ -75,8 +81,15 @@ WSGI_APPLICATION = 'iclinic.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env("DB_NAME", default='postgres'),
+        'USER': env("DB_USER", default='postgres'),
+        'PASSWORD': env("DB_PASSWD"),
+        'HOST': env("DB_HOST", default='127.0.0.1'),
+        'PORT': env("DB_PORT", default=5432),
+        'TEST': {
+            'NAME': 'test_db',
+        }
     }
 }
 
@@ -105,7 +118,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
@@ -118,3 +131,39 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# ENV VARIABLES
+ENV = {
+    'physicians_api': {
+        'key': env('PHYSICIANS_API_TOKEN'),
+        'url': env('PHYSICIANS_API_URL'),
+        'path': env('PHYSICIANS_API_PATH'),
+        'timeout': env('PHYSICIANS_API_TIMEOUT'),
+        'retry': env('PHYSICIANS_API_RETRY'),
+        'cache_ttl': env('PHYSICIANS_API_CACHE_TTL_HOURS'),
+    },
+    'clinics_api': {
+        'key': env('CLINICSPATIENTS_API_TOKEN'),
+        'url': env('CLINICS_API_URL'),
+        'path': env('CLINICS_API_PATH'),
+        'timeout': env('CLINICS_API_TIMEOUT'),
+        'retry': env('CLINICS_API_RETRY'),
+        'cache_ttl': env('CLINICS_API_CACHE_TTL_HOURS'),
+    },
+    'patients_api': {
+        'key': env('PATIENTS_API_TOKEN'),
+        'url': env('PATIENTS_API_URL'),
+        'path': env('PATIENTS_API_PATH'),
+        'timeout': env('PATIENTS_API_TIMEOUT'),
+        'retry': env('PATIENTS_API_RETRY'),
+        'cache_ttl': env('PATIENTS_API_CACHE_TTL_HOURS'),
+    },
+    'metrics_api': {
+        'key': env('METRICS_API_TOKEN'),
+        'url': env('METRICS_API_URL'),
+        'path': env('METRICS_API_PATH'),
+        'timeout': env('METRICS_API_TIMEOUT'),
+        'retry': env('METRICS_API_RETRY'),
+    },
+}
