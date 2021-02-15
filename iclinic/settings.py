@@ -144,7 +144,7 @@ ENV = {
         'cache_ttl': env('PHYSICIANS_API_CACHE_TTL_HOURS'),
     },
     'clinics_api': {
-        'key': env('CLINICSPATIENTS_API_TOKEN'),
+        'key': env('CLINICS_API_TOKEN'),
         'url': env('CLINICS_API_URL'),
         'path': env('CLINICS_API_PATH'),
         'timeout': env('CLINICS_API_TIMEOUT'),
