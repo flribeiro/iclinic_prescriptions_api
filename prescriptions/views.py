@@ -49,11 +49,12 @@ def post_prescription(request):
     metrics_body_request['patient_email'] = patients_response.get('email', '')
     metrics_body_request['patient_phone'] = patients_response.get('phone', '')
 
-    print(f'BODY REQUEST: {json.dumps(metrics_body_request, indent=4)}')
     metrics_response = api_metrics.post_metrics(metrics_body_request)
-    print(f'METRICS RESPONSE: {json.dumps(metrics_response, indent=4)}')
 
-    if serializer.is_valid(raise_exception=True) and not 'error' in metrics_response:
+    if 'error' in metrics_response:
+        return Response(metrics_response, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+    if serializer.is_valid(raise_exception=True):
         saved_prescription = serializer.save()
         prescription = Prescription.objects.get(pk=saved_prescription.pk)
         serializer = PrescriptionSerializer(prescription)

@@ -22,9 +22,5 @@ errors = {
     6: {
         'message': 'patients service not available',
         'code': '06'
-    },
-    7: {
-        'message': 'metrics service overloaded',
-        'code': '07'
     }
 }

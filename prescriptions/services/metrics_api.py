@@ -31,9 +31,4 @@ class MetricsApiService():
             response.raise_for_status()
             return response.json()
         except requests.exceptions.HTTPError:
-            if response.status_code == 400:
-                return {'error': errors[7]}
-            else:
-                return {'error': errors[4]}
-        except:
             return {'error': errors[4]}
