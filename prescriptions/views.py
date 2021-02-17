@@ -1,3 +1,4 @@
+import logging
 from typing import OrderedDict
 from rest_framework import viewsets
 from prescriptions.models import Prescription, Clinic, Physician, Patient
@@ -11,7 +12,10 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from collections import OrderedDict
-import json
+
+
+# Create a logger instance
+logger = logging.getLogger(__name__)
 
 
 @api_view(['POST'])
@@ -19,6 +23,8 @@ def post_prescription(request):
     serializer = PrescriptionSerializer(data=request.data)
 
     pre_data = serializer.initial_data
+
+    logger.info(f"API called. Payload: {pre_data}")
 
     api_clinics = ClinicsApiService()
     api_physicians = PhysiciansApiService()
@@ -34,6 +40,7 @@ def post_prescription(request):
     physicians_response = api_physicians.get_physician_by_id(
         pre_data['physician']['id'])
     if 'error' in physicians_response:
+        logger.warning(f'Error calling Physicians API: {physicians_response}')
         return Response(physicians_response, status=status.HTTP_404_NOT_FOUND) if physicians_response['error']['code'] == "02" else Response(physicians_response, status=status.HTTP_503_SERVICE_UNAVAILABLE)
     metrics_body_request['physician_id'] = physicians_response.get('id', '')
     metrics_body_request['physician_name'] = physicians_response.get(
@@ -43,6 +50,7 @@ def post_prescription(request):
     patients_response = api_patients.get_patient_by_id(
         pre_data['patient']['id'])
     if 'error' in patients_response:
+        logger.warning(f'Error calling Patients API: {patients_response}')
         return Response(patients_response, status=status.HTTP_404_NOT_FOUND) if patients_response['error']['code'] == "03" else Response(patients_response, status=status.HTTP_503_SERVICE_UNAVAILABLE)
     metrics_body_request['patient_id'] = patients_response.get('id', '')
     metrics_body_request['patient_name'] = patients_response.get('name', '')
@@ -52,6 +60,7 @@ def post_prescription(request):
     metrics_response = api_metrics.post_metrics(metrics_body_request)
 
     if 'error' in metrics_response:
+        logger.warning(f'Error calling Metrics API: {metrics_response}')
         return Response(metrics_response, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
     if serializer.is_valid(raise_exception=True):
@@ -61,7 +70,9 @@ def post_prescription(request):
         response = build_response(serializer.data)
         return Response(response)
     else:
-        return Response({'error': errors[1]}, status=status.HTTP_400_BAD_REQUEST)
+        error = {'error': errors[1]}
+        logger.warning(f'Invalid request. Error: {error}')
+        return Response(error, status=status.HTTP_400_BAD_REQUEST)
 
 
 def build_response(data):

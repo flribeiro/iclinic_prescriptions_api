@@ -153,4 +153,7 @@ dmypy.json
 # vscode config files
 .vscode/
 
+# log files
+*.log
+
 # End of https://www.toptal.com/developers/gitignore/api/django

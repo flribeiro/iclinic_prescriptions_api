@@ -143,6 +143,36 @@ CACHES = {
     }
 }
 
+# Logging configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'logform': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'logform'
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': 'iclinic_prescriptions.log',
+            'formatter': 'logform'
+        },
+    },
+    'loggers': {
+        'prescriptions': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': True
+        },
+    },
+}
+
 # ENV VARIABLES
 ENV = {
     'physicians_api': {
