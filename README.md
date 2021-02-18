@@ -80,7 +80,7 @@ http://localhost:8000/prescriptions/
 $ make test
 ```
 
-After run the tests, coverage report will be available [HERE](htmlcov/index.html) (open in browser).
+After run the tests, coverage report will be available at `htmlcov/index.html` (open in browser).
 
 
 ## cURLs for calling API
