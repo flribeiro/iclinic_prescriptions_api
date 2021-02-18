@@ -1,6 +1,17 @@
 version: "3.8"
 
 services:
+  web:
+    build: .
+    container_name: iclinic_web
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/src:z
+    ports:
+      - ${APP_PORT}:8000
+    depends_on:
+      - db
+      - redis_dev
   db:
     image: postgres:13
     container_name: iclinic_db
